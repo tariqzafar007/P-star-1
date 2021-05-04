@@ -1,0 +1,6 @@
+test C-tor (1, 2)
+test C-tor (2, 3)
+Sum is 3
+Sum is 5
+test D-tor (1, 2)
+test D-tor (2, 3)

@@ -1,3 +1,16 @@
+HTML_TEMPLATE rowforeach {
+		<tr>
+			<td>{@my_row->id}</td>
+			<td>{@my_row->description}</td>
+		</tr>
+}
+HTML_TEMPLATE rowfor {
+		<tr>
+			<td>{@rows[i]->id}</td>
+			<td>{@rows[i]->description}</td>
+		</tr>
+}
+
 HTML_TEMPLATE document {
 	<!DOCTYPE HTML>
 	<html>
@@ -5,6 +18,28 @@ HTML_TEMPLATE document {
 	<title>{@title}</title>
 	</head>
 	<body>
+	{@if (@rows > 0)
+		<p>We have rows to print!</p>
+		<table>
+			<tr>
+				<th>ID</th>
+				<th>Description</th>
+			</tr>
+			{@foreach (auto my_row; rows)
+				{@#HTML_TEMPLATE rowforeach}
+			}
+			{@for (int i = 0; i < @rows; i++)
+				{@#HTML_TEMPLATE rowfor}
+				{@if (i == 0)
+					<!-- i is 0 -->
+				} else if (int a = i == 1)
+					<!-- i is 1, and a is {@a}  -->
+				} else
+					<!-- i is other -->
+				}
+			}
+		</table>
+	}
 	</body>
 	</html>
 }
@@ -12,6 +47,24 @@ HTML_TEMPLATE document {
 SCENE main {
 	string title = "P* Web Programmin Language test page";
 
+	struct row {
+		public int id;
+		public string description;
+		row (int _id, string _description) {
+			id = _id;
+			description = _description;
+		};
+	};
+
+	array<row> rows;
+
+	rows[@rows](1, "First row");
+	rows[@rows](2, "Second row");
+	rows[@rows](3, "Third row");
+
 	#CONTENT_TYPE text/html;
+
 	#HTML_TEMPLATE document;
+
+	return 0;
 }

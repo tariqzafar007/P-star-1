@@ -2,7 +2,7 @@
 
 -------------------------------------------------------------
 
-Copyright (c) MMXIII Atle Solbakken
+Copyright (c) MMXIII-MMXIV Atle Solbakken
 atle@goliathdns.no
 
 -------------------------------------------------------------
@@ -44,9 +44,10 @@ class wpl_value_function_ptr : public wpl_value {
 	wpl_namespace_session *nss_this;
 
 	int saved_discard_pos;
+	bool did_run;
 
 	public:
-	PRIMITIVE_TYPEINFO(function_ptr)
+	PRIMITIVE_TYPEATTR(function_ptr)
 
 	wpl_value_function_ptr *clone() const {
 		return new wpl_value_function_ptr(*this); 

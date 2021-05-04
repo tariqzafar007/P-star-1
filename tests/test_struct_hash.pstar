@@ -1,0 +1,23 @@
+SCENE main {
+	struct test {
+		int a;
+		int b;
+		test(int _a, int _b) {
+			a = _a;
+			b = _b;
+			echo "test C-tor ($a, $b)\n";
+		};
+		~test() {
+			echo "test D-tor ($a, $b)\n";
+		};
+		public int print() {
+			echo "Sum is " . (a + b) . "\n";
+		};
+	};
+
+	hash<test> test_array;
+	test_array["a"](1, 2);
+	test_array["b"](2, 3);
+	test_array["a"]->print();
+	test_array["b"]->print();
+}

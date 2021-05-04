@@ -2,7 +2,7 @@
 
 -------------------------------------------------------------
 
-Copyright (c) MMXIII Atle Solbakken
+Copyright (c) MMXIII-MMXIV Atle Solbakken
 atle@goliathdns.no
 
 -------------------------------------------------------------
@@ -43,13 +43,16 @@ class wpl_value_struct : public wpl_value, public wpl_namespace_session {
 
 	const wpl_struct *mother_struct;
 	wpl_variable *this_ptr;
+	bool first_run;
 
 	public:
 	wpl_value_struct (const wpl_struct *mother_struct) :
-		wpl_namespace_session(mother_struct)
+		wpl_namespace_session(mother_struct),
+		wpl_value()
 	{
 		this_ptr = NULL;
 		this->mother_struct = mother_struct;
+		first_run = true;
 	}
 	virtual ~wpl_value_struct() {}
 	virtual void suicide() {
@@ -59,6 +62,17 @@ class wpl_value_struct : public wpl_value, public wpl_namespace_session {
 	virtual int get_precedence() const { return mother_struct->get_precedence(); };
 	virtual wpl_value_struct *clone() const { return new wpl_value_struct(*this); };
 	virtual wpl_value_struct *clone_empty() const { return new wpl_value_struct(*this); };
+
+	const wpl_type_complete *get_type() const override { return mother_struct; };
+
+	void reset() override {
+		wpl_namespace_session::reset_variables();
+		first_run = true;
+	}
+
+	void set_ctor_called() {
+		first_run = false;
+	}
 
 	int finalize_expression (wpl_expression_state *exp_state, wpl_value *last_value) {
 		if (!set_strong (last_value)){
@@ -78,13 +92,17 @@ class wpl_value_struct : public wpl_value, public wpl_namespace_session {
 
 	bool set_strong (wpl_value *value);
 
+	int do_operator_recursive (
+			wpl_expression_state *exp_state,
+			wpl_value *final_result
+	) override;
 	int do_operator (
 			wpl_expression_state *exp_state,
 			wpl_value *final_result,
 			const struct wpl_operator_struct *op,
 			wpl_value *lhs,
 			wpl_value *rhs
-	);
+	) override;
 
 	void output_json(wpl_io &io) override;
 
@@ -96,8 +114,10 @@ class wpl_value_struct : public wpl_value, public wpl_namespace_session {
 		return true;
 	}
 
+	void notify_destructor(wpl_state *state, wpl_namespace_session *nss, wpl_io &io) override;
+
 #ifdef WPL_DEBUG_EXPRESSIONS
-	string toString() {
+	string toString() const {
 		return string("DBG{struct ") + mother_struct->get_name() + "}";
 	}
 #endif
